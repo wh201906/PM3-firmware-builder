@@ -10,14 +10,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          path: config
-
-      - name: Checkout Proxmark3 RRG repo
-        uses: actions/checkout@v3
-        with:
-          repository: RfidResearchGroup/proxmark3
-          path: proxmark3
       
       - name: Install dependencies
         run: |
@@ -29,33 +21,16 @@ jobs:
       
       - name: Build
         run: |
-          cd proxmark3
-          git log --pretty=oneline --no-color
-          make PLATFORM=PM3GENERIC STANDALONE=HF_14ASNIFF bootrom fullimage
-          sha1sum bootrom/obj/bootrom.elf>>checksum.txt
-          sha1sum bootrom/obj/bootrom.s19>>checksum.txt
-          sha1sum armsrc/obj/fullimage.elf>>checksum.txt
-          sha1sum armsrc/obj/fullimage.s19>>checksum.txt
-          cat checksum.txt
+          python build.py
 
       - name: Upload ELF firmware
         uses: actions/upload-artifact@v3
         with:
           name: firmware(ELF)
-          path: |
-            proxmark3/bootrom/obj/bootrom.elf
-            proxmark3/armsrc/obj/fullimage.elf
+          path: pm3-*/artifacts/*/*.elf
 
       - name: Upload S19 firmware
         uses: actions/upload-artifact@v3
         with:
           name: firmware(S19)
-          path: |
-            proxmark3/bootrom/obj/bootrom.s19
-            proxmark3/armsrc/obj/fullimage.s19
-
-      - name: Upload checksum
-        uses: actions/upload-artifact@v3
-        with:
-          name: checksum
-          path: proxmark3/checksum.txt
+          path: pm3-*/artifacts/*/*.s19
