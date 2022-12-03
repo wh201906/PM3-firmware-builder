@@ -31,13 +31,17 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: firmware(ELF)
-          path: artifacts/**/*.elf
+          path: |
+            artifacts/**/*.elf
+            artifacts/**/*.txt
 
       - name: Upload S19 firmware
         uses: actions/upload-artifact@v3
         with:
           name: firmware(S19)
-          path: artifacts/**/*.s19
+          path: |
+            artifacts/**/*.s19
+            artifacts/**/*.txt
 
       - name: Upload checksum
         uses: actions/upload-artifact@v3

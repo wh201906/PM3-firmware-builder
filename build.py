@@ -1,6 +1,7 @@
 from os import system, environ, chdir
 import json
 import glob
+from subprocess import run, PIPE
 
 URL = "https://github.com/RfidResearchGroup/proxmark3.git"
 
@@ -23,6 +24,12 @@ for ref in conf["refs"]:
     refPath = "pm3-" + ref
     chdir(environ["GITHUB_WORKSPACE"])
     print("Cloning", refPath, flush=True)
+    # save commit SHA1
+    sha1 = run("git rev-parse HEAD", shell=True, stdout=PIPE).stdout
+    sha1 = sha1.decode("utf-8").strip()
+    print(sha1, flush=True)
+    system("mkdir -p artifacts/" + ref)
+    system("touch artifacts/" + ref + "/" + sha1 + ".txt")
     system(
         "git -c advice.detachedHead=false"
         " clone " + URL + " --depth=1 -b " + ref + " " + refPath
@@ -31,7 +38,8 @@ for ref in conf["refs"]:
 
     # itarate all standalone mode
     for standalone in conf["standaloneList"]:
-        print("Building firmware for", standalone, flush=True)
+        modeName = standalone if len(standalone) != 0 else "empty"
+        print("Building firmware for standalone mode:", modeName, flush=True)
         # clean
         system("make clean 1> /dev/null")
 
@@ -52,7 +60,7 @@ for ref in conf["refs"]:
         system(buildCmd)
 
         # collect generated files
-        outputPath = "../artifacts/" + ref + "/" + standalone + "/"
+        outputPath = "../artifacts/" + ref + "/" + modeName + "/"
         system("mkdir -p " + outputPath)
         system("mv bootrom/obj/bootrom.elf " + outputPath)
         system("mv armsrc/obj/fullimage.elf " + outputPath)
