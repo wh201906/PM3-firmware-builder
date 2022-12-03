@@ -1,0 +1,61 @@
+name: Build Firmware
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: config
+
+      - name: Checkout Proxmark3 RRG repo
+        uses: actions/checkout@v3
+        with:
+          repository: RfidResearchGroup/proxmark3
+          path: proxmark3
+      
+      - name: Install dependencies
+        run: |
+          # Install dependencies
+          # use `apt-get` rather than `apt` there. The former is for scripts and the latter is for terminal
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends git ca-certificates build-essential \
+            pkg-config libreadline-dev gcc-arm-none-eabi libnewlib-dev libbz2-dev libssl-dev
+      
+      - name: Build
+        run: |
+          cd proxmark3
+          git log --pretty=oneline --no-color
+          make PLATFORM=PM3GENERIC STANDALONE=HF_14ASNIFF bootrom fullimage
+          sha1sum bootrom/obj/bootrom.elf>>checksum.txt
+          sha1sum bootrom/obj/bootrom.s19>>checksum.txt
+          sha1sum armsrc/obj/fullimage.elf>>checksum.txt
+          sha1sum armsrc/obj/fullimage.s19>>checksum.txt
+          cat checksum.txt
+
+      - name: Upload ELF firmware
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware(ELF)
+          path: |
+            proxmark3/bootrom/obj/bootrom.elf
+            proxmark3/armsrc/obj/fullimage.elf
+
+      - name: Upload S19 firmware
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware(S19)
+          path: |
+            proxmark3/bootrom/obj/bootrom.s19
+            proxmark3/armsrc/obj/fullimage.s19
+
+      - name: Upload checksum
+        uses: actions/upload-artifact@v3
+        with:
+          name: checksum
+          path: proxmark3/checksum.txt
