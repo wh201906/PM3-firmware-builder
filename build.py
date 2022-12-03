@@ -1,5 +1,6 @@
 from os import system, environ, chdir
 import json
+import glob
 
 URL = "https://github.com/RfidResearchGroup/proxmark3.git"
 
@@ -16,8 +17,8 @@ def validKey(name: str):
         return False
 
 
+# `system(cd)` doesn't work there
 # iterate all refs
-# `cd` doesn't work there
 for ref in conf["refs"]:
     refPath = "pm3-" + ref
     chdir(environ["GITHUB_WORKSPACE"])
@@ -28,7 +29,10 @@ for ref in conf["refs"]:
     # itarate all standalone mode
     for standalone in conf["standaloneList"]:
         print("Building firmware for", standalone, flush=True)
+        # clean
         system("make clean 1> /dev/null")
+
+        # build
         buildCmd = "make -j"
         buildCmd += " STANDALONE=" + standalone
 
@@ -44,10 +48,12 @@ for ref in conf["refs"]:
         buildCmd += " bootrom fullimage"
         system(buildCmd)
 
+        # collect generated files
         outputPath = "../artifacts/" + ref + "/" + standalone + "/"
         system("mkdir -p " + outputPath)
         system("mv bootrom/obj/bootrom.elf " + outputPath)
         system("mv armsrc/obj/fullimage.elf " + outputPath)
+        # collect .s19 file
         if conf["buildS19"]:
             system("mv bootrom/obj/bootrom.s19 " + outputPath)
             system("mv armsrc/obj/fullimage.s19 " + outputPath)

@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      
+
       - name: Install dependencies
         run: |
           # Install dependencies
@@ -18,10 +18,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends git ca-certificates build-essential \
             pkg-config libreadline-dev gcc-arm-none-eabi libnewlib-dev libbz2-dev libssl-dev
-      
+
       - name: Build
         run: |
           python build.py
+
+      - name: Show checksum
+        run: |
+          python checksum.py
 
       - name: Upload ELF firmware
         uses: actions/upload-artifact@v3
@@ -34,3 +38,9 @@ jobs:
         with:
           name: firmware(S19)
           path: artifacts/**/*.s19
+
+      - name: Upload checksum
+        uses: actions/upload-artifact@v3
+        with:
+          name: checksum
+          path: checksum.txt
