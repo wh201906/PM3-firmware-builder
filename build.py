@@ -23,7 +23,10 @@ for ref in conf["refs"]:
     refPath = "pm3-" + ref
     chdir(environ["GITHUB_WORKSPACE"])
     print("Cloning", refPath, flush=True)
-    system("git clone " + URL + " --depth=1 -b " + ref + " " + refPath)
+    system(
+        "git -c advice.detachedHead=false"
+        " clone " + URL + " --depth=1 -b " + ref + " " + refPath
+    )
     chdir(refPath)
 
     # itarate all standalone mode
