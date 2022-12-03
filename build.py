@@ -24,22 +24,24 @@ for ref in conf["refs"]:
     refPath = "pm3-" + ref
     chdir(environ["GITHUB_WORKSPACE"])
     print("Cloning", refPath, flush=True)
-    # save commit SHA1
-    sha1 = run("git rev-parse HEAD", shell=True, stdout=PIPE).stdout
-    sha1 = sha1.decode("utf-8").strip()
-    print(sha1, flush=True)
-    system("mkdir -p artifacts/" + ref)
-    system("touch artifacts/" + ref + "/" + sha1 + ".txt")
     system(
         "git -c advice.detachedHead=false"
         " clone " + URL + " --depth=1 -b " + ref + " " + refPath
     )
     chdir(refPath)
 
+    # save commit SHA1
+    sha1 = run("git rev-parse HEAD", shell=True, stdout=PIPE).stdout
+    sha1 = sha1.decode("utf-8").strip()
+    print(sha1, flush=True)
+    system("mkdir -p ../artifacts/" + ref)
+    system("touch ../artifacts/" + ref + "/" + sha1 + ".txt")
+
     # itarate all standalone mode
     for standalone in conf["standaloneList"]:
         modeName = standalone if len(standalone) != 0 else "empty"
         print("Building firmware for standalone mode:", modeName, flush=True)
+
         # clean
         system("make clean 1> /dev/null")
 
@@ -64,7 +66,8 @@ for ref in conf["refs"]:
         system("mkdir -p " + outputPath)
         system("mv bootrom/obj/bootrom.elf " + outputPath)
         system("mv armsrc/obj/fullimage.elf " + outputPath)
-        # collect .s19 file
+
+        # collect .s19 files
         if conf["buildS19"]:
             system("mv bootrom/obj/bootrom.s19 " + outputPath)
             system("mv armsrc/obj/fullimage.s19 " + outputPath)
