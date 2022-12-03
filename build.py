@@ -28,7 +28,7 @@ for ref in conf["refs"]:
     # itarate all standalone mode
     for standalone in conf["standaloneList"]:
         print("Building firmware for", standalone, flush=True)
-        system("make clean")
+        system("make clean 1> /dev/null")
         buildCmd = "make -j"
         buildCmd += " STANDALONE=" + standalone
 
@@ -44,7 +44,7 @@ for ref in conf["refs"]:
         buildCmd += " bootrom fullimage"
         system(buildCmd)
 
-        outputPath = "artifacts/" + standalone + "/"
+        outputPath = "../artifacts/" + ref + "/" + standalone + "/"
         system("mkdir -p " + outputPath)
         system("mv bootrom/obj/bootrom.elf " + outputPath)
         system("mv armsrc/obj/fullimage.elf " + outputPath)

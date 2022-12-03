@@ -27,10 +27,10 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: firmware(ELF)
-          path: pm3-*/artifacts/*/*.elf
+          path: artifacts/**/*.elf
 
       - name: Upload S19 firmware
         uses: actions/upload-artifact@v3
         with:
           name: firmware(S19)
-          path: pm3-*/artifacts/*/*.s19
+          path: artifacts/**/*.s19
