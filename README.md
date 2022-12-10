@@ -1,6 +1,6 @@
 # PM3 Firmware Builder
 
-Build multiple firmwares of Proxmark3 RRG repo by GitHub Action.  
+Build multiple firmwares of [Proxmark3 RRG repo](https://github.com/RfidResearchGroup/proxmark3) by GitHub Action.  
 
 ## Usage
 1. Fork this repo
