@@ -19,55 +19,53 @@ def validKey(name: str):
 
 
 # `system(cd)` doesn't work there
-# iterate all refs
-for ref in conf["refs"]:
-    refPath = "pm3-" + ref
-    chdir(environ["GITHUB_WORKSPACE"])
-    print("Cloning", refPath, flush=True)
-    system(
-        "git -c advice.detachedHead=false"
-        " clone " + URL + " --depth=1 -b " + ref + " " + refPath
-    )
-    chdir(refPath)
+ref = environ["MATRIX_REF"]
+refPath = "pm3-" + ref
+chdir(environ["GITHUB_WORKSPACE"])
+print("Cloning", refPath, flush=True)
+system(
+    "git -c advice.detachedHead=false"
+    " clone " + URL + " --depth=1 -b " + ref + " " + refPath
+)
+chdir(refPath)
 
-    # save commit SHA1
-    sha1 = run("git rev-parse HEAD", shell=True, stdout=PIPE).stdout
-    sha1 = sha1.decode("utf-8").strip()
-    print(sha1, flush=True)
-    system("mkdir -p ../artifacts/" + ref)
-    system("touch ../artifacts/" + ref + "/" + sha1 + ".txt")
+# save commit SHA1
+sha1 = run("git rev-parse HEAD", shell=True, stdout=PIPE).stdout
+sha1 = sha1.decode("utf-8").strip()
+print(sha1, flush=True)
+system("mkdir -p ../artifacts/" + ref)
+system("touch ../artifacts/" + ref + "/" + sha1 + ".txt")
 
-    # itarate all standalone mode
-    for standalone in conf["standaloneList"]:
-        modeName = standalone if len(standalone) != 0 else "empty"
-        print("Building firmware for standalone mode:", modeName, flush=True)
+standalone = environ["MATRIX_STANDALONE"]
+modeName = standalone if len(standalone) != 0 else "empty"
+print("Building firmware for standalone mode:", modeName, flush=True)
 
-        # clean
-        system("make clean 1> /dev/null")
+# clean
+system("make clean 1> /dev/null")
 
-        # build
-        buildCmd = "make -j"
-        buildCmd += " STANDALONE=" + standalone
+# build
+buildCmd = "make -j"
+buildCmd += " STANDALONE=" + standalone
 
-        if validKey("PLATFORM"):
-            buildCmd += " PLATFORM=" + conf["PLATFORM"]
-        if validKey("PLATFORM_EXTRAS"):
-            buildCmd += " PLATFORM_EXTRAS=" + conf["PLATFORM_EXTRAS"]
-        if validKey("PLATFORM_SIZE"):
-            buildCmd += " PLATFORM_SIZE=" + conf["PLATFORM_SIZE"]
-        for option in conf["extraOptions"]:
-            buildCmd += " " + option + "=1"
+if validKey("PLATFORM"):
+    buildCmd += " PLATFORM=" + conf["PLATFORM"]
+if validKey("PLATFORM_EXTRAS"):
+    buildCmd += " PLATFORM_EXTRAS=" + conf["PLATFORM_EXTRAS"]
+if validKey("PLATFORM_SIZE"):
+    buildCmd += " PLATFORM_SIZE=" + conf["PLATFORM_SIZE"]
+for option in conf["extraOptions"]:
+    buildCmd += " " + option + "=1"
 
-        buildCmd += " bootrom fullimage"
-        system(buildCmd)
+buildCmd += " bootrom fullimage"
+system(buildCmd)
 
-        # collect generated files
-        outputPath = "../artifacts/" + ref + "/" + modeName + "/"
-        system("mkdir -p " + outputPath)
-        system("mv bootrom/obj/bootrom.elf " + outputPath)
-        system("mv armsrc/obj/fullimage.elf " + outputPath)
+# collect generated files
+outputPath = "../artifacts/" + ref + "/" + modeName + "/"
+system("mkdir -p " + outputPath)
+system("mv bootrom/obj/bootrom.elf " + outputPath)
+system("mv armsrc/obj/fullimage.elf " + outputPath)
 
-        # collect .s19 files
-        if conf["buildS19"]:
-            system("mv bootrom/obj/bootrom.s19 " + outputPath)
-            system("mv armsrc/obj/fullimage.s19 " + outputPath)
+# collect .s19 files
+if conf["buildS19"]:
+    system("mv bootrom/obj/bootrom.s19 " + outputPath)
+    system("mv armsrc/obj/fullimage.s19 " + outputPath)

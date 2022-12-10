@@ -4,8 +4,29 @@ on:
   push:
 
 jobs:
+  load_conf:
+    runs-on: ubuntu-22.04
+    outputs:
+      refs: ${{ steps.load_step.outputs.refs }}
+      standalones: ${{ steps.load_step.outputs.standalones }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: load_step
+        name: Load Config
+        run: | 
+          python loadConf.py
+          cat $GITHUB_OUTPUT
+
   build:
     runs-on: ubuntu-22.04
+    needs:
+      - load_conf
+    strategy:
+      matrix:
+        ref: ${{ fromJSON(needs.load_conf.outputs.refs) }}
+        standalone: ${{ fromJson(needs.load_conf.outputs.standalones) }}
 
     steps:
       - name: Checkout
@@ -20,6 +41,9 @@ jobs:
             pkg-config libreadline-dev gcc-arm-none-eabi libnewlib-dev libbz2-dev libssl-dev
 
       - name: Build
+        env:
+          MATRIX_REF: ${{ matrix.ref }}
+          MATRIX_STANDALONE: ${{ matrix.standalone }}
         run: |
           python build.py
 
@@ -27,24 +51,12 @@ jobs:
         run: |
           python checksum.py
 
-      - name: Upload ELF firmware
+      - name: Upload firmware
         uses: actions/upload-artifact@v3
         with:
-          name: firmware(ELF)
+          name: firmware_${{ matrix.ref }}_${{ matrix.standalone }}
           path: |
             artifacts/**/*.elf
-            artifacts/**/*.txt
-
-      - name: Upload S19 firmware
-        uses: actions/upload-artifact@v3
-        with:
-          name: firmware(S19)
-          path: |
             artifacts/**/*.s19
             artifacts/**/*.txt
 
-      - name: Upload checksum
-        uses: actions/upload-artifact@v3
-        with:
-          name: checksum
-          path: checksum.txt

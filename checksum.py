@@ -12,3 +12,4 @@ for file in files:
 
 print("Checksum:", flush=True)
 system("cat checksum.txt")
+system("mv checksum.txt artifacts/")
