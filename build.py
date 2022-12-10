@@ -34,7 +34,7 @@ sha1 = run("git rev-parse HEAD", shell=True, stdout=PIPE).stdout
 sha1 = sha1.decode("utf-8").strip()
 print(sha1, flush=True)
 system("mkdir -p ../artifacts/" + ref)
-system("touch ../artifacts/" + ref + "/" + sha1 + ".txt")
+system("touch ../artifacts/" + sha1 + ".txt")
 
 standalone = environ["MATRIX_STANDALONE"]
 modeName = standalone if len(standalone) != 0 else "empty"
@@ -60,7 +60,7 @@ buildCmd += " bootrom fullimage"
 system(buildCmd)
 
 # collect generated files
-outputPath = "../artifacts/" + ref + "/" + modeName + "/"
+outputPath = "../artifacts/"
 system("mkdir -p " + outputPath)
 system("mv bootrom/obj/bootrom.elf " + outputPath)
 system("mv armsrc/obj/fullimage.elf " + outputPath)
