@@ -40,11 +40,24 @@ standalone = environ["MATRIX_STANDALONE"]
 modeName = standalone if len(standalone) != 0 else "empty"
 print("Building firmware for standalone mode:", modeName, flush=True)
 
+# detect using PLATFORM=PM3GENERIC or PLATFORM=PM3OTHER
+oldVersion = True
+with open("Makefile.platform.sample", "r") as sample:
+    text = sample.readline()
+    while text:
+        if "PM3GENERIC" in text:
+            oldVersion = False
+            break
+        text = sample.readline()
+
 # generate Makefile.platform
 with open("Makefile.platform", "w+") as mp:
     mp.write("STANDALONE=" + standalone + "\n")
     if validKey("PLATFORM"):
-        mp.write("PLATFORM=" + conf["PLATFORM"] + "\n")
+        platform = conf["PLATFORM"]
+        if oldVersion and platform == "PM3GENERIC":
+            platform = "PM3OTHER"
+        mp.write("PLATFORM=" + platform + "\n")
     if validKey("PLATFORM_EXTRAS"):
         mp.write("PLATFORM_EXTRAS=" + conf["PLATFORM_EXTRAS"] + "\n")
     if validKey("PLATFORM_SIZE"):
