@@ -40,24 +40,23 @@ standalone = environ["MATRIX_STANDALONE"]
 modeName = standalone if len(standalone) != 0 else "empty"
 print("Building firmware for standalone mode:", modeName, flush=True)
 
+# generate Makefile.platform
+with open("Makefile.platform", "w+") as mp:
+    mp.write("STANDALONE=" + standalone + "\n")
+    if validKey("PLATFORM"):
+        mp.write("PLATFORM=" + conf["PLATFORM"] + "\n")
+    if validKey("PLATFORM_EXTRAS"):
+        mp.write("PLATFORM_EXTRAS=" + conf["PLATFORM_EXTRAS"] + "\n")
+    if validKey("PLATFORM_SIZE"):
+        mp.write("PLATFORM_SIZE=" + conf["PLATFORM_SIZE"] + "\n")
+    for option in conf["extraOptions"]:
+        mp.write(option + "=1\n")
+
 # clean
-system("make clean 1> /dev/null")
+system("make clean -j 1> /dev/null")
 
 # build
-buildCmd = "make -j"
-buildCmd += " STANDALONE=" + standalone
-
-if validKey("PLATFORM"):
-    buildCmd += " PLATFORM=" + conf["PLATFORM"]
-if validKey("PLATFORM_EXTRAS"):
-    buildCmd += " PLATFORM_EXTRAS=" + conf["PLATFORM_EXTRAS"]
-if validKey("PLATFORM_SIZE"):
-    buildCmd += " PLATFORM_SIZE=" + conf["PLATFORM_SIZE"]
-for option in conf["extraOptions"]:
-    buildCmd += " " + option + "=1"
-
-buildCmd += " bootrom fullimage"
-system(buildCmd)
+system("make -j bootrom fullimage")
 
 # collect generated files
 outputPath = "../artifacts/"
@@ -69,3 +68,6 @@ system("mv armsrc/obj/fullimage.elf " + outputPath)
 if conf["buildS19"]:
     system("mv bootrom/obj/bootrom.s19 " + outputPath)
     system("mv armsrc/obj/fullimage.s19 " + outputPath)
+
+# collect Makefile.platform
+system("mv ./Makefile.platform " + outputPath)

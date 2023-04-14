@@ -59,4 +59,5 @@ jobs:
             artifacts/**/*.elf
             artifacts/**/*.s19
             artifacts/**/*.txt
+            artifacts/**/Makefile.platform
 
