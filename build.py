@@ -1,4 +1,4 @@
-from os import system, environ, chdir
+from os import system, environ, chdir, path
 import json
 import glob
 from subprocess import run, PIPE
@@ -27,7 +27,12 @@ system(
     "git -c advice.detachedHead=false"
     " clone " + URL + " --depth=1 -b " + ref + " " + refPath
 )
-chdir(refPath)
+if not path.exists("./" + refPath):  # failed to clone the branch
+    system("git clone " + URL + " " + refPath)
+    chdir(refPath)
+    system("git -c advice.detachedHead=false checkout " + ref)
+else:
+    chdir(refPath)
 
 # save commit SHA1
 sha1 = run("git rev-parse HEAD", shell=True, stdout=PIPE).stdout
