@@ -4,7 +4,6 @@ import json
 import glob
 from subprocess import run, PIPE
 
-URL = "https://github.com/RfidResearchGroup/proxmark3.git"
 
 # load config file
 confFile = open("config.json")
@@ -19,7 +18,12 @@ def validKey(name: str):
         return False
 
 
-# `system(cd)` doesn't work there
+URL = "https://github.com/RfidResearchGroup/proxmark3.git"
+
+if validKey("URL"):
+    URL = environ["URL"]
+
+# `system("cd")` doesn't work there
 ref = environ["MATRIX_REF"]
 refPath = "pm3-" + ref
 chdir(environ["GITHUB_WORKSPACE"])

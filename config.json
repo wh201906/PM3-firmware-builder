@@ -18,5 +18,7 @@
     "//": "extra options will be defined as xxx=1",
     "extraOptions": [],
     "//": "if you need the S19 file, set it to true",
-    "buildS19": true
+    "buildS19": true,
+    "//": "if you want to specify the repository URL rather than the RRG one, set it as you want",
+    "URL": ""
 }
