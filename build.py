@@ -1,4 +1,5 @@
 from os import system, environ, chdir, path
+import sys
 import json
 import glob
 from subprocess import run, PIPE
@@ -75,6 +76,12 @@ system("make clean -j 1> /dev/null")
 
 # build
 system("make -j bootrom fullimage")
+
+# check the build result
+checkPath = "./bootrom/obj/bootrom.elf"
+if not path.exists(checkPath):
+    print(checkPath + " doesn't exist, Exiting...", flush=True)
+    sys.exit(-1)
 
 # collect generated files
 outputPath = "../artifacts/"
