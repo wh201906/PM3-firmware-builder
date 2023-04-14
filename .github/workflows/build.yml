@@ -24,6 +24,7 @@ jobs:
     needs:
       - load_conf
     strategy:
+      fail-fast: false
       matrix:
         ref: ${{ fromJSON(needs.load_conf.outputs.refs) }}
         standalone: ${{ fromJson(needs.load_conf.outputs.standalones) }}
