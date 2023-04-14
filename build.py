@@ -21,7 +21,8 @@ def validKey(name: str):
 URL = "https://github.com/RfidResearchGroup/proxmark3.git"
 
 if validKey("URL"):
-    URL = environ["URL"]
+    print("Using repo", URL, flush=True)
+    URL = conf["URL"]
 
 # `system("cd")` doesn't work there
 ref = environ["MATRIX_REF"]
