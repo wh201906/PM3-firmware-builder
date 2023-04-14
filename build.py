@@ -72,8 +72,12 @@ with open("Makefile.platform", "w+") as mp:
         mp.write("PLATFORM_EXTRAS=" + conf["PLATFORM_EXTRAS"] + "\n")
     if validKey("PLATFORM_SIZE"):
         mp.write("PLATFORM_SIZE=" + conf["PLATFORM_SIZE"] + "\n")
-    for option in conf["extraOptions"]:
-        mp.write(option + "=1\n")
+    if validKey("extraOptions"):
+        for option in conf["extraOptions"]:
+            mp.write(option + "=1\n")
+    if validKey("extraLines"):
+        for line in conf["extraLines"]:
+            mp.write(line + "\n")
 
 # clean
 system("make clean -j 1> /dev/null")
