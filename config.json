@@ -17,7 +17,7 @@
     "PLATFORM_SIZE": "",
     "//": "extra options will be defined as xxx=1",
     "extraOptions": [],
-    "//": "extra line will be put at the end of Makefile.platform",
+    "//": "extra lines will be put at the end of Makefile.platform",
     "extraLines": [],
     "//": "if you need the S19 file, set it to true",
     "buildS19": true,
