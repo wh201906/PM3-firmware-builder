@@ -50,6 +50,8 @@ system("touch ../artifacts/" + sha1 + ".txt")
 standalone = environ["MATRIX_STANDALONE"]
 modeName = standalone if len(standalone) != 0 else "empty"
 print("Building firmware for standalone mode:", modeName, flush=True)
+if standalone == "empty":
+    standalone = ""
 
 # detect using PLATFORM=PM3GENERIC or PLATFORM=PM3OTHER
 oldVersion = True

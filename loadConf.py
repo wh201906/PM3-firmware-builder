@@ -8,4 +8,7 @@ confFile.close()
 with open(environ["GITHUB_OUTPUT"], "a") as f:
     # the keys there matches the keys in jobs->load_conf->outputs of build.yml 
     f.write("refs=" + str(conf["refs"]) + "\n")
-    f.write("standalones=" + str(conf["standaloneList"]) + "\n")
+    standaloneList = conf["standaloneList"]
+    if len(standaloneList) == 0:
+        standaloneList = ["empty"]
+    f.write("standalones=" + str(standaloneList) + "\n")
