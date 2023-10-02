@@ -94,13 +94,40 @@ Build multiple firmwares of [Proxmark3 RRG repo](https://github.com/RfidResearch
 ```
 {
     "//": "You will get len(refs) * len(standaloneList) firmwares",
-    "refs": ["v4.15864"],
+    "refs": ["v4.13441"],
     "standaloneList": [""],
     "PLATFORM": "PM3GENERIC",
     "PLATFORM_EXTRAS": "",
     "PLATFORM_SIZE": "256",
     "extraOptions": ["SKIP_HITAG", "SKIP_FELICA"],
     "buildS19": true
+}
+```
+
+</details>
+
+<details>
+<summary>config.json</summary>
+
+```
+{
+    "refs": ["v4.17140", "v4.16717", "v4.15864"],
+    "standaloneList": ["", "HF_14ASNIFF"],
+    "PLATFORM": "PM3GENERIC",
+    "PLATFORM_EXTRAS": "",
+    "PLATFORM_SIZE": "256",
+    "extraOptions": [
+        "SKIP_HITAG",
+        "SKIP_ICLASS",
+        "SKIP_FELICA",
+        "SKIP_LEGICRF",
+        "SKIP_ISO14443b",
+        "SKIP_EM4x50",
+        "SKIP_NFCBARCODE"
+    ],
+    "extraLines": [],
+    "buildS19": true,
+    "URL": ""
 }
 ```
 

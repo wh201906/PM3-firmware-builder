@@ -86,12 +86,15 @@ with open("Makefile.platform", "w+") as mp:
 system("make clean -j 1> /dev/null")
 
 # build
-system("make -j bootrom fullimage")
+exitCode = system("make -j bootrom fullimage recovery")
 
 # check the build result
 checkPath = "./bootrom/obj/bootrom.elf"
 if not path.exists(checkPath):
-    print(checkPath + " doesn't exist, Exiting...", flush=True)
+    print(f"{checkPath} doesn't exist, Exiting...", flush=True)
+    sys.exit(-1)
+elif exitCode != 0:
+    print(f"Error occurs during the build: {exitCode}", flush=True)
     sys.exit(-1)
 
 # collect generated files
@@ -99,6 +102,7 @@ outputPath = "../artifacts/"
 system("mkdir -p " + outputPath)
 system("mv bootrom/obj/bootrom.elf " + outputPath)
 system("mv armsrc/obj/fullimage.elf " + outputPath)
+system("mv recovery/proxmark3_recovery.bin " + outputPath)
 
 # collect .s19 files
 if conf["buildS19"]:

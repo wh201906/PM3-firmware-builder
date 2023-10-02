@@ -59,6 +59,7 @@ jobs:
           path: |
             artifacts/**/*.elf
             artifacts/**/*.s19
+            artifacts/**/*.bin
             artifacts/**/*.txt
             artifacts/**/Makefile.platform
 
