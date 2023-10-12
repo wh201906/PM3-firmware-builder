@@ -2,25 +2,39 @@
     "//": "You will get len(refs) * len(standaloneList) firmwares",
     "refs": [
         "master",
-        "v4.15864",
-        "v4.13441"
+        "v4.17140",
+        "v4.16191",
+        "v4.15864"
     ],
     "standaloneList": [
         "HF_14ASNIFF",
-        "LF_SAMYRUN"
+        "HF_14BSNIFF",
+        "HF_15SNIFF",
+        "LF_EM4100EMUL",
+        "LF_EM4100RSWB",
+        "LF_EM4100RSWW",
+        "LF_EM4100RWC",
+        "LF_HIDBRUTE",
+        "LF_HIDFCBRUTE",
+        "LF_ICEHID",
+        "LF_NEXID",
+        "HF_BOG",
+        "HF_COLIN",
+        "HF_CRAFTBYTE",
+        "HF_MATTYRUN",
+        "HF_MFCSIM",
+        "HF_TMUDFORD",
+        "HF_YOUNG"
     ],
-    "//": "parameter for all firmware, leave it blank to use the default value",
     "PLATFORM": "PM3GENERIC",
-    "//": "parameter for all firmware, leave it blank to use the default value",
     "PLATFORM_EXTRAS": "",
-    "//": "parameter for all firmware, empty(default), 256 or 512",
     "PLATFORM_SIZE": "",
-    "//": "extra options will be defined as xxx=1",
     "extraOptions": [],
     "//": "extra lines will be put at the end of Makefile.platform",
-    "extraLines": [],
+    "extraLines": [
+        "PLATFORM_DEFS += -DWITH_FLASH",
+        "PLATFORM_DEFS += -DWITH_SMARTCARD"
+    ],
     "//": "if you need the S19 file, set it to true",
-    "buildS19": true,
-    "//": "if you want to specify the repository URL rather than the RRG one, set it as you want",
-    "URL": ""
+    "buildS19": true
 }
